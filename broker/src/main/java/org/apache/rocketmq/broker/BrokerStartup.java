@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,6 +57,14 @@ public class BrokerStartup {
     public static InternalLogger log;
 
     public static void main(String[] args) {
+//        String[]array = {4,6,8,1};
+//        Arrays.sort(array);
+//        System.out.println(Arrays.toString(array));
+//        Arrays.sort(array,new Comparator<String>(){
+//                public int compare(String s1,String s2){
+//                    return  s1.length()-s2.length();
+//                }
+//        });
         start(createBrokerController(args));
     }
 

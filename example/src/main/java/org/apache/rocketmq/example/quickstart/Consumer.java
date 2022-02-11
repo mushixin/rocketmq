@@ -35,49 +35,57 @@ public class Consumer {
         /*
          * Instantiate with specified consumer group name.
          */
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4");
+        for(int i=1;i<=3;++i){
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4"+i);
 
-        /*
-         * Specify name server addresses.
-         * <p/>
-         *
-         * Alternatively, you may specify name server addresses via exporting environmental variable: NAMESRV_ADDR
-         * <pre>
-         * {@code
-         * consumer.setNamesrvAddr("name-server1-ip:9876;name-server2-ip:9876");
-         * }
-         * </pre>
-         */
-        consumer.setNamesrvAddr("localhost:9876");
+            /*
+             * Specify name server addresses.
+             * <p/>
+             *
+             * Alternatively, you may specify name server addresses via exporting environmental variable: NAMESRV_ADDR
+             * <pre>
+             * {@code
+             * consumer.setNamesrvAddr("name-server1-ip:9876;name-server2-ip:9876");
+             * }
+             * </pre>
+             */
+            consumer.setNamesrvAddr("localhost:9876");
 
-        /*
-         * Specify where to start in case the specified consumer group is a brand new one.
-         */
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+            /*
+             * Specify where to start in case the specified consumer group is a brand new one.
+             */
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
 
-        /*
-         * Subscribe one more more topics to consume.
-         */
-        consumer.subscribe("TopicTest", "*");
+            /*
+             * Subscribe one more more topics to consume.
+             */
+            consumer.subscribe("TopicTest", "*");
+            /*
+             *  Register callback to execute on arrival of messages fetched from brokers.
+             */
+            int finalI = i;
+            consumer.registerMessageListener(new MessageListenerConcurrently() {
 
-        /*
-         *  Register callback to execute on arrival of messages fetched from brokers.
-         */
-        consumer.registerMessageListener(new MessageListenerConcurrently() {
+                @Override
+                public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
+                                                                ConsumeConcurrentlyContext context) {
+                    System.out.print("i:"+ finalI + " ");
+                    System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), new String(msgs.get(0).getBody()));
+//                    if (new String(msgs.get(0).getBody()).contains("Hello RocketMQ new0")) {
+//                        throw new RuntimeException("");
+//                    }
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                }
+            });
 
-            @Override
-            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
-                ConsumeConcurrentlyContext context) {
-                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
-                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
-            }
-        });
+            /*
+             *  Launch the consumer instance.
+             */
+            consumer.start();
 
-        /*
-         *  Launch the consumer instance.
-         */
-        consumer.start();
+            System.out.printf("Consumer Started.%n");
 
-        System.out.printf("Consumer Started.%n");
+
+        }
     }
 }
