@@ -57,7 +57,7 @@ public class Producer {
          */
         producer.start();
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
 
                 /*
@@ -71,6 +71,7 @@ public class Producer {
                 /*
                  * Call send message to deliver message to one of brokers.
                  */
+                int finalI = i;
                 SendResult sendResult = producer.send(msg,new MessageQueueSelector(){
                     @Override
                     public MessageQueue select(List<MessageQueue> mqs, Message msg, Object arg) {

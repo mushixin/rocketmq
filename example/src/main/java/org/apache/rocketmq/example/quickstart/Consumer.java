@@ -35,8 +35,8 @@ public class Consumer {
         /*
          * Instantiate with specified consumer group name.
          */
-        for(int i=1;i<=3;++i){
-            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4"+i);
+        for(int i=1;i<=10;++i){
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4");
 
             /*
              * Specify name server addresses.
@@ -69,11 +69,18 @@ public class Consumer {
                 @Override
                 public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
                                                                 ConsumeConcurrentlyContext context) {
-                    System.out.print("i:"+ finalI + " ");
-                    System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), new String(msgs.get(0).getBody()));
 //                    if (new String(msgs.get(0).getBody()).contains("Hello RocketMQ new0")) {
 //                        throw new RuntimeException("");
 //                    }
+                    try {
+                        System.out.println("开始消费");
+                        System.out.printf(finalI+"%s Receive New Messages: %s %n", Thread.currentThread().getName(), new String(msgs.get(0).getBody()));
+                        Thread.sleep(1000);
+                        System.out.println("终止消费");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 }
             });
